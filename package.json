@@ -1,0 +1,46 @@
+{
+  "name": "mongodb_sql_translator",
+  "version": "0.1.0",
+  "description": "parser that allows to translate mongodb query to sql",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "NODE_ENV=test mocha --ui tdd  src/**/*.test.ts",
+    "test:watch": "NODE_ENV=test mocha --ui tdd  src/test/*.test.ts --watch",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "lint": "eslint ./src/",
+    "prepublishOnly": "npm test && npm run build"
+  },
+  "repository": {
+    "type": "git"
+  },
+  "keywords": [
+    "mongodb",
+    "sql",
+    "translator"
+  ],
+  "files": [
+    "dist/**/*"
+  ],
+  "author": "Jacek Grzybowski",
+  "license": "none",
+  "devDependencies": {
+    "@eslint/js": "^9.14.0",
+    "@swc/cli": "^0.5.0",
+    "@swc/core": "^1.8.0",
+    "@swc/register": "^0.1.10",
+    "@types/chai": "^5.0.1",
+    "@types/eslint__js": "^8.42.3",
+    "@types/mocha": "^10.0.9",
+    "@types/node": "^22.8.7",
+    "chai": "^5.1.2",
+    "eslint": "^9.14.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "mocha": "^10.8.2",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.12.2"
+  }
+}

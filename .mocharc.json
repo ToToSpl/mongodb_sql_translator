@@ -1,0 +1,5 @@
+{
+  "require": "@swc/register",
+  "watch-files": ["./src/**/*.ts"],
+  "timeout": "10000"
+}
