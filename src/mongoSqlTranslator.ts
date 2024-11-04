@@ -31,10 +31,10 @@ const createFind =
     query: Expression<T> | MultiArgumentOperator<T> | undefined,
     projection?: Partial<Record<keyof T, number | boolean>>
   ) => {
+    const selectSqlPart = parseProjectionToSql(projection);
+
     const whereLogicSqlPart = parseQueryToSql(query);
     const whereSqlPart = whereLogicSqlPart ? ['WHERE', whereLogicSqlPart] : [];
-
-    const selectSqlPart = parseProjectionToSql(projection);
 
     return (
       [
@@ -76,11 +76,11 @@ const parseQueryToSql = <T extends SupportedMongoCollectionStructure>(
   }
 
   if (isExpression(query)) {
-    return parseExpression(query).join(' ');
+    return parseExpression(query);
   }
 
   if (isMultiArgumentOperator(query)) {
-    return parseMultiArgumentOperator(query).join(' ');
+    return parseMultiArgumentOperator(query);
   }
 };
 
@@ -104,14 +104,14 @@ const parseExpression = (
   }
 
   if (isSingleArgumentOperator(operand)) {
-    return [fieldName, ...parseSingleArgumentOperator(operand)];
+    return [fieldName, parseSingleArgumentOperator(operand)].join(' ');
   }
 
   if (isTableArgumentOperator(operand)) {
-    return [fieldName, ...parseTableArgumentOperator(operand)];
+    return [fieldName, parseTableArgumentOperator(operand)].join(' ');
   }
 
-  return [fieldName, '=', parseSupportedMongoValueType(operand)];
+  return [fieldName, '=', parseSupportedMongoValueType(operand)].join(' ');
 };
 
 const parseMultiArgumentOperator = (
@@ -147,13 +147,13 @@ const parseMultiArgumentOperator = (
       if (isMultiArgumentOperator(value)) {
         const parsedMultiArgumentOperator = parseMultiArgumentOperator(
           value
-        ) as string[];
+        ) as string;
 
-        return '(' + parsedMultiArgumentOperator.join(' ') + ')';
+        return `(${parsedMultiArgumentOperator})`;
       }
 
       if (isExpression(value)) {
-        return parseExpression(value).join(' ');
+        return parseExpression(value);
       }
 
       throw new Error(
@@ -163,7 +163,7 @@ const parseMultiArgumentOperator = (
     })
     .join(` ${sqlOperator} `);
 
-  return [sqlValues];
+  return sqlValues;
 };
 
 const parseSingleArgumentOperator = (
@@ -202,7 +202,7 @@ const parseSingleArgumentOperator = (
 
   const sqlValue = parseSupportedMongoValueType(value);
 
-  return [sqlOperator, sqlValue];
+  return [sqlOperator, sqlValue].join(' ');
 };
 
 const parseTableArgumentOperator = (
@@ -237,7 +237,7 @@ const parseTableArgumentOperator = (
 
   const sqlList = `(${parsedValues})`;
 
-  return [sqlOperator, sqlList];
+  return [sqlOperator, sqlList].join(' ');
 };
 
 const parseSupportedMongoValueType = (valueType: SupportedMongoValueTypes) => {
