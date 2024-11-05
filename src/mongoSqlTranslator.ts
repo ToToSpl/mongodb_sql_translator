@@ -54,7 +54,7 @@ const parseProjectionToSql = (
     return '*';
   }
 
-  return Object.keys(projection)
+  const sqlProjection = Object.keys(projection)
     .map((field) => {
       const shouldSelect = projection[field];
 
@@ -66,6 +66,14 @@ const parseProjectionToSql = (
     })
     .filter((field) => field !== undefined)
     .join(', ');
+
+  // if no fields are choosen then to perform sql query null field must be choosen in sql
+  // WARN: this place could be potentially logged as the query does nothing
+  if (sqlProjection === '') {
+    return 'NULL';
+  }
+
+  return sqlProjection;
 };
 
 const parseQueryToSql = <T extends SupportedMongoCollectionStructure>(
