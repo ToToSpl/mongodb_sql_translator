@@ -40,6 +40,25 @@ test('should fetch name and _id by age comparison', () => {
   expect(sqlQuery).to.equal('SELECT name, _id FROM user WHERE age >= 21;');
 });
 
+test('should make nested operation between any type of arguments', () => {
+  const user = createMongoCollectionTranslator<{
+    name: string;
+    age: number;
+    _id: number;
+  }>({ sqlCollectionName: 'user' });
+
+  const sqlQuery = user.queryToSql().find(
+    {
+      $or: [{ age: 1 }, { $and: [{ name: 'john' }, { age: { $gt: 18 } }] }],
+    },
+    { _id: 1 }
+  );
+
+  expect(sqlQuery).to.equal(
+    "SELECT _id FROM user WHERE age = 1 OR (name = 'john' AND age > 18);"
+  );
+});
+
 test('should fetch all rows by matching "name" ', () => {
   const user = createMongoCollectionTranslator<{
     name: string;
@@ -58,10 +77,10 @@ test('should fetch all rows by matching "name" ', () => {
         },
       ],
     },
-    { name: 1, age: true, isEmployed: 1 }
+    { name: 1, age: false, isEmployed: 1 }
   );
 
-  console.log(sqlQuery);
-
-  expect(true).to.equal(true);
+  expect(sqlQuery).to.equal(
+    "SELECT name, isEmployed FROM user WHERE name > 'a' AND age = 2 AND (name = 'b' OR age IN (2, 3) OR isEmployed = TRUE);"
+  );
 });
