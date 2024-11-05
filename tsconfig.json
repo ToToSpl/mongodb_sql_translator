@@ -5,6 +5,7 @@
     "outDir": "./dist",
 
     "baseUrl": ".",
+    "noImplicitReturns": true,
     "esModuleInterop": true,
     /*
      * intentionally choose to not import helpers
