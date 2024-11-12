@@ -183,7 +183,7 @@ const getKeyAndValue = <T extends Record<string, unknown>>(oneKeyObject: T) => {
 
   const keyValue = oneKeyObject[fieldName] as T[keyof T];
 
-  if (!keyValue) {
+  if (keyValue === undefined) {
     throw new Error('could not retrieve keyValue for field', {
       cause: oneKeyObject,
     });
